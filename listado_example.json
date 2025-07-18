@@ -6,7 +6,8 @@
         "apellidos": "Pérez",
         "desembarco_anterior": true,
         "infraccion": false,
-        "tipo_cuota": "completa"
+        "tipo_cuota": "completa",
+        "implicacion": true
     },
     {
         "id": 2,
@@ -14,7 +15,8 @@
         "apellidos": "Gómez",
         "desembarco_anterior": false,
         "infraccion": true,
-        "tipo_cuota": "reducida"
+        "tipo_cuota": "reducida",
+        "implicacion": true
     }
   ]
 }
