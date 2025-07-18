@@ -1,0 +1,20 @@
+{
+  "participantes": [
+    {
+        "id": 1,
+        "nombre": "Ana",
+        "apellidos": "Pérez",
+        "desembarco_anterior": true,
+        "infraccion": false,
+        "tipo_cuota": "completa"
+    },
+    {
+        "id": 2,
+        "nombre": "Luis",
+        "apellidos": "Gómez",
+        "desembarco_anterior": false,
+        "infraccion": true,
+        "tipo_cuota": "reducida"
+    }
+  ]
+}
