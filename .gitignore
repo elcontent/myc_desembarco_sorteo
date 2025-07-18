@@ -124,6 +124,6 @@ dmypy.json
 .pyre/
 
 # other files
-listado.json
+participantes.json
 *.txt
 *.xlsx
