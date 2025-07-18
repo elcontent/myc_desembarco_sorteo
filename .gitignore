@@ -126,3 +126,4 @@ dmypy.json
 # other files
 listado.json
 *.txt
+*.xlsx

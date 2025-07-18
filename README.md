@@ -12,6 +12,20 @@ La entrada de datos del script es un fichero JSON que contiene la lista de parti
 
 Por último, el sorteo será reproducible, por lo que cuando termine la ejecución del script, nos dirá la semilla utilizada para el sorteo. De esta manera, si se quiere repetir el sorteo con los mismos participantes y ponderaciones, se podrá hacer utilizando la misma semilla y el mismo fichero de entrada.
 
+## Excel2JSON
+
+Para facilitar la creación del fichero JSON de entrada, puedes utilizar el script `excel2json.py` que convierte un fichero Excel con la lista de participantes a formato JSON. Este script asume que el fichero Excel tiene las siguientes columnas:
+- `id`: Identificador del participante.
+- `nombre`: Nombre del participante.
+- `apellidos`: Apellidos del participante.
+- `tipo cuota`: Tipo de cuota del participante (completa o reducida).
+
+Puedes ejecutar el script `excel2json.py` de la siguiente manera:
+
+```bash
+python3 excel2json.py nombre_excel.xlsx nombre_hoja
+```
+
 ## ▶️ Ejecución
 
 Para ejecutar el script, asegúrate de tener Python instalado en tu sistema. Luego, sigue estos pasos:
