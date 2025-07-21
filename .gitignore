@@ -125,5 +125,5 @@ dmypy.json
 
 # other files
 participantes.json
-*.txt
+sorteo_*.txt
 *.xlsx
