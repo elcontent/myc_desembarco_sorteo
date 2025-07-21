@@ -5,7 +5,7 @@ import os
 import unicodedata
 import re
 
-COLUMNAS_REQUERIDAS = ["id", "nombre", "apellidos", "tipo_cuota"]
+COLUMNAS_REQUERIDAS = ["id", "nombre", "apellidos", "tipo_cuota", "edad", "18"]
 CAMPOS_EXTRA = {
     "desembarco_anterior": False,
     "infraccion": False,
@@ -55,6 +55,18 @@ def excel_minimo_a_json(ruta_excel, nombre_hoja, fila_encabezado, ruta_salida="p
 
     if filtrados > 0:
         print(f"⚠️ Se han ignorado {filtrados} fila(s) sin ID.")
+        
+    # Filtro por mayoría de edad
+    columnas_disponibles = df.columns.tolist()
+    if "edad" in columnas_disponibles:
+        df = df[df["edad"].fillna(0).astype(float) >= 18]
+        print("✅ Se ha filtrado por columna 'edad' (>= 18)")
+    elif "18" in columnas_disponibles:
+        df = df[df["18"].fillna(0).astype(int) == 1]
+        print("✅ Se ha filtrado por columna '18' (marcado como mayor de edad)")
+    else:
+        print("⚠️ No se encontró columna 'edad' ni '18'. No se ha aplicado filtro de mayoría de edad.")
+
 
     # Añadir los campos extra por defecto
     for campo, valor in CAMPOS_EXTRA.items():
