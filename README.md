@@ -19,6 +19,7 @@ Para facilitar la creación del fichero JSON de entrada, puedes utilizar el scri
 - `nombre`: Nombre del participante.
 - `apellidos`: Apellidos del participante.
 - `tipo cuota`: Tipo de cuota del participante (completa o reducida).
+- `edad`: Edad del participante.
 
 Puedes ejecutar el script `excel2json.py` de la siguiente manera:
 
