@@ -1,16 +1,68 @@
-# Sorteo del Desembarco (Moros y Cristianos de La Vila Joiosa)
+# 🎲 Sorteo del Desembarco - Penya El Tabik
+
+Sorteo ponderado y transparente para asignar las plazas del Desembarco en las fiestas de Moros y Cristianos de La Vila Joiosa.
 
 ## 🏴‍☠️ Descripción
 
 El Sorteo del Desembarco es un acto que realizamos en la Penya el Tabik cada año para repartir las plazas asignadas a la Penya para el Desembarco. 
 
-## ⚙️ Datos técnicos
+## ⚙️ Datos técnicos y funcionamiento general
 
-Tenemos un script desarrollado en Python que se encarga de realizar el sorteo. Este script utiliza la librería `random` para seleccionar aleatoriamente a los participantes. Así mismo, destaca que el sorteo se realiza de manera ponderada, es decir, que cada participante tiene una probabilidad distinta en función de valores como si desembarcó el año anterior, si es un colaborador activo, etc. 
+Tenemos un script desarrollado en Python que se encarga de realizar el sorteo. Este script utiliza las librerías `random` y `numpy` para seleccionar aleatoriamente a los participantes, pero aplicando ponderaciones según ciertos criterios objetivos (participación previa, implicación, tipo de cuota...).
 
-La entrada de datos del script es un fichero JSON que contiene la lista de participantes y sus respectivos variables de ponderación. El script genera un fichero TXT con el resultado del sorteo.
+La entrada de datos del script es un fichero JSON que contiene la lista de participantes y sus respectivas variables de ponderación. El script genera un fichero TXT con el resultado del sorteo.
 
 Por último, el sorteo será reproducible, por lo que cuando termine la ejecución del script, nos dirá la semilla utilizada para el sorteo. De esta manera, si se quiere repetir el sorteo con los mismos participantes y ponderaciones, se podrá hacer utilizando la misma semilla y el mismo fichero de entrada.
+
+### ⚙️ Criterios de Ponderación del Sorteo
+
+El sorteo del desembarco **no es completamente aleatorio**. Se aplica un sistema de **ponderación basado en criterios objetivos**, con el objetivo de fomentar la participación activa, la equidad y la rotación.  
+A continuación se detallan las reglas aplicadas:
+
+#### 📐 Reglas de exclusión y penalización por defecto
+
+| Criterio                            | Efecto sobre la probabilidad | Detalles                                                       |
+|-------------------------------------|-------------------------------|----------------------------------------------------------------|
+| ❌ Infracción cometida              | Exclusión total              | No participa en el sorteo.                                     |
+| 📉 Participó en el desembarco anterior | -90% de peso                 | Probabilidad drásticamente reducida (*peso x 0.1*).            |
+| 💸 Cuota reducida o incompleta      | -75% de peso                 | Penaliza la aportación parcial (*peso x 0.25*).                |
+| 🤝 Implicación activa en la organización | +25% de peso               | Reconoce el compromiso (*peso x 1.25*).                        |
+
+> 📎 *Nota: Las penalizaciones y bonificaciones son acumulativas y se aplican sobre un peso base de 1.0.*
+
+---
+
+#### 📋 Ejemplo de cálculo del peso
+
+Una persona con:
+- Cuota reducida ✅  
+- Participación el año anterior ✅  
+- Implicación ✅  
+
+**Peso:** `1.0 x 0.1 x 0.25 x 1.25 = 0.03125`  
+(*Muy baja probabilidad, pero no imposible.*)
+
+Una persona con:
+- Cuota completa ✅  
+- No desembarcó ✅  
+- Implicación ✅  
+
+**Peso:** `1.0 x 1.25 = 1.25`  
+(*Más probabilidades de ser seleccionada.*)
+
+---
+
+#### Ajuste de pesos
+
+Las ponderaciones se ajustan en el principio del script `sorteo.py` mediante constantes. Puedes modificar estos valores para ajustar la influencia de cada criterio en el sorteo. Estas constantes son:
+
+```python
+# 🚨 CONSTANTES DE PENALIZACIÓN
+PENALIZACION_DESEMBARCO_ANTERIOR = 0.1      # -90% si desembarcó antes
+PENALIZACION_CUOTA_REDUCIDA = 0.25          # -75% si no es completa
+EXCLUSION_POR_INFRACCION = True             # Si cometió infracción, fuera
+BONIFICACION_IMPLICACION = 1.25             # +25% de peso si está implicado
+```
 
 ## Excel2JSON
 
@@ -148,4 +200,5 @@ En el caso de querer ver las probabilidades sin ejecutar el sorteo, la salida se
 
 ## 👤 Autor
 
-El script ha sido desarrollado por **Jordi Sellés Enríquez** como parte de la Directiva de la Penya el Tabik.
+Desarrollado por [Jordi Sellés Enríquez](https://cv.elcontent.es) – Directiva de la Penya El Tabik
+

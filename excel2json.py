@@ -19,7 +19,7 @@ def normalizar_columna(col):
     col = re.sub(r'[^a-z0-9_]', '', col)
     return col
 
-def excel_minimo_a_json(ruta_excel, nombre_hoja, fila_encabezado, ruta_salida="participantes.json"):
+def excel2json(ruta_excel, nombre_hoja, fila_encabezado, ruta_salida="participantes.json"):
     if not os.path.exists(ruta_excel):
         print(f"No se encuentra el archivo: {ruta_excel}")
         sys.exit(1)
@@ -83,7 +83,7 @@ def excel_minimo_a_json(ruta_excel, nombre_hoja, fila_encabezado, ruta_salida="p
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("Uso: python excel_minimo_a_json.py archivo.xlsx NOMBRE_HOJA FILA_ENCABEZADO")
+        print("Uso: python excel2json.py archivo.xlsx NOMBRE_HOJA FILA_ENCABEZADO")
         sys.exit(1)
 
     ruta_excel = sys.argv[1]
@@ -94,4 +94,4 @@ if __name__ == "__main__":
         print("La fila de encabezado debe ser un número entero (empezando en 0).")
         sys.exit(1)
 
-    excel_minimo_a_json(ruta_excel, nombre_hoja, fila_encabezado)
+    excel2json(ruta_excel, nombre_hoja, fila_encabezado)
