@@ -1,15 +1,12 @@
 import pandas as pd
-import json
-import sys
-import os
-import unicodedata
-import re
+import json, sys, os, unicodedata, re
 
 COLUMNAS_REQUERIDAS = ["id", "nombre", "apellidos", "tipo_cuota", "edad", "18"]
 CAMPOS_EXTRA = {
     "desembarco_anterior": False,
     "infraccion": False,
-    "implicacion": False
+    "implicacion": False,
+    "antiguo": False
 }
 
 def normalizar_columna(col):
