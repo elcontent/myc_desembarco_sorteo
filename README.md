@@ -150,7 +150,6 @@ El script `sorteo.py` espera un fichero JSON con la siguiente estructura:
       "infraccion": false,
       "tipo_cuota": "completa"
     },
-    ...
   ]
 }
 ```
