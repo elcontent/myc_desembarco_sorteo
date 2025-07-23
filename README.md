@@ -45,10 +45,10 @@ A continuación se detallan las reglas aplicadas:
 | Escenario                                           | Fórmula                                | Peso final |
 |----------------------------------------------------|----------------------------------------|------------|
 | Solo cuota reducida                                | `1.0 × 0.25`                           | `0.25`     |
-| Salió el año anterior + es antiguo                 | `1.0 × 0.5 × 2.0`                      | `1.0 ✅`   |
-| Salió + cuota reducida + implicado                 | `1.0 × 0.5 × 0.25 × 1.25`              | `0.15625`  |
+| Desembarcó el año anterior + es antiguo                 | `1.0 × 0.5 × 2.0`                      | `1.0 ✅`   |
+| Desembarcó + cuota reducida + implicado                 | `1.0 × 0.5 × 0.25 × 1.25`              | `0.15625`  |
 | Cuota completa + implicación + antiguo             | `1.0 × 1.25 × 2.0`                     | `2.5 🚀`   |
-| Salió + cuota reducida, sin implicación ni antigüedad | `1.0 × 0.5 × 0.25`                  | `0.125 🫠` |
+| Desembarcó + cuota reducida, sin implicación ni antigüedad | `1.0 × 0.5 × 0.25`                  | `0.125 🫠` |
 
 ---
 
@@ -56,7 +56,7 @@ A continuación se detallan las reglas aplicadas:
 
 Una persona con:
 - Cuota reducida ✅  
-- Participación el año anterior ✅  
+- Desembarcó el año anterior ✅  
 - Implicación ✅  
 
 **Peso:** `1.0 × 0.5 × 0.25 × 1.25 = 0.15625`  
