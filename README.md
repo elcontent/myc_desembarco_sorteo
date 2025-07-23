@@ -126,7 +126,7 @@ Puedes ejecutar el script `excel2json.py` de la siguiente manera:
 python3 excel2json.py nombre_excel.xlsx nombre_hoja
 ```
 
-## 🧾 Ejecución del script sorteo.py
+## 🧾 Ejecución del script _sorteo.py_
 
 Asegúrate de tener Python instalado y las dependencias requeridas (`tabulate`, etc.).  
 Puedes instalar los requisitos con:
@@ -154,7 +154,7 @@ El script `sorteo.py` espera un fichero JSON con la siguiente estructura:
 }
 ```
 
-## 🚀 Comandos de _sorteo.py_
+## 🚀 Comandos de sorteo.py
 
 El script `sorteo.py` se ejecuta desde la línea de comandos y acepta los siguientes parámetros:
 
