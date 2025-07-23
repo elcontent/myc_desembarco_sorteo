@@ -4,11 +4,12 @@ from tabulate import tabulate
 from numpy.random import choice as np_choice
 import numpy as np
 
-# 🚨 CONSTANTES DE PENALIZACIÓN
-PENALIZACION_DESEMBARCO_ANTERIOR = 0.1      # -90% si desembarcó antes
+# 🚨 CONSTANTES DE PENALIZACIÓN Y BONIFICACIÓN AJUSTADAS
+PENALIZACION_DESEMBARCO_ANTERIOR = 0.5      # -50% si desembarcó antes
 PENALIZACION_CUOTA_REDUCIDA = 0.25          # -75% si no es completa
-EXCLUSION_POR_INFRACCION = True             # Si cometió infracción, fuera
-BONIFICACION_IMPLICACION = 1.25             # +25% de peso si está implicado
+EXCLUSION_POR_INFRACCION = True             # Fuera del sorteo
+BONIFICACION_IMPLICACION = 1.25             # +25% si está implicado
+BONIFICACION_ANTIGUEDAD = 2.0               # +100% si es antiguo
 
 def calcular_peso(persona):
     if EXCLUSION_POR_INFRACCION and persona.get("infraccion", False):
@@ -16,12 +17,13 @@ def calcular_peso(persona):
     peso = 1.0
     if persona.get("desembarco_anterior", False):
         peso *= PENALIZACION_DESEMBARCO_ANTERIOR
-    cuota = persona.get("tipo_cuota", "").strip().lower()
-    cuota_normalizada = cuota.replace("í", "i")
-    if cuota_normalizada not in ("completa", "si"):
-      peso *= PENALIZACION_CUOTA_REDUCIDA
+    cuota = persona.get("tipo_cuota", "").strip().lower().replace("í", "i")
+    if cuota not in ("completa", "si"):
+        peso *= PENALIZACION_CUOTA_REDUCIDA
     if persona.get("implicacion", False):
         peso *= BONIFICACION_IMPLICACION
+    if persona.get("antiguo", False):
+        peso *= BONIFICACION_ANTIGUEDAD
     return max(peso, 0.01)
 
 def sorteo_plazas(personas, semilla=42):
@@ -77,6 +79,8 @@ def exportar_resultados_txt(nombre_archivo, semilla, max_plazas, seleccionados, 
                     observaciones.append("Penalizado por cuota reducida")
                 if p.get("implicacion", False):
                     observaciones.append("Bonificado por implicación")
+                if p.get("antiguo", False):
+                    observaciones.append("Bonificado por antigüedad")
                 tabla.append([
                     p["id"],
                     p["nombre"],
@@ -85,9 +89,10 @@ def exportar_resultados_txt(nombre_archivo, semilla, max_plazas, seleccionados, 
                     f"{p.get('peso', 1):.2f}",
                     "Sí" if p.get("desembarco_anterior") else "No",
                     "Sí" if p.get("implicacion") else "No",
+                    "Sí" if p.get("antiguo") else "No",
                     "; ".join(observaciones) if observaciones else "Sin penalizaciones"
                 ])
-            return tabulate(tabla, headers=["ID", "Nombre", "Apellidos", "Cuota", "Peso", "Desembarcó", "Implicado", "Observaciones"], tablefmt="grid")
+            return tabulate(tabla, headers=["ID", "Nombre", "Apellidos", "Cuota", "Peso", "Desembarcó", "Implicado", "Antiguo", "Observaciones"], tablefmt="grid")
 
         f.write("🎯 SELECCIONADOS:\n")
         f.write(tabla_participantes(seleccionados))
@@ -117,10 +122,7 @@ def mostrar_probabilidades(personas):
         return
 
     personas_con_pesos = [
-        {
-            **p,
-            "peso": calcular_peso(p)
-        }
+        {**p, "peso": calcular_peso(p)}
         for p in personas_validas
     ]
 
@@ -145,7 +147,7 @@ def mostrar_probabilidades(personas):
     headers = ["ID", "Nombre", "Apellidos", "Peso", "Probabilidad"]
     print(tabulate(tabla, headers=headers, tablefmt="fancy_grid"))
     print("=" * 50 + "\n")
-    
+
 def main():
     parser = argparse.ArgumentParser(
         description="Sorteo ponderado de plazas para el Desembarco de Moros y Cristianos de La Vila Joiosa"
@@ -188,11 +190,12 @@ def main():
             s.get("tipo_cuota", ""),
             f"{s.get('peso', 1):.2f}",
             "Sí" if s.get("desembarco_anterior") else "No",
-            "Sí" if s.get("implicacion") else "No"
+            "Sí" if s.get("implicacion") else "No",
+            "Sí" if s.get("antiguo") else "No"
         ]
         for s in seleccionados
     ]
-    headers_sel = ["ID", "Nombre", "Apellidos", "Cuota", "Peso", "Desembarcó", "Implicado"]
+    headers_sel = ["ID", "Nombre", "Apellidos", "Cuota", "Peso", "Desembarcó", "Implicado", "Antiguo"]
     print(tabulate(tabla_sel, headers=headers_sel, tablefmt="fancy_grid"))
 
     print(f"\n🪑 Suplentes ({len(suplentes)}):")
@@ -205,7 +208,8 @@ def main():
                 s.get("tipo_cuota", ""),
                 f"{s.get('peso', 1):.2f}",
                 "Sí" if s.get("desembarco_anterior") else "No",
-                "Sí" if s.get("implicacion") else "No"
+                "Sí" if s.get("implicacion") else "No",
+                "Sí" if s.get("antiguo") else "No"
             ]
             for s in suplentes
         ]
