@@ -19,16 +19,36 @@ Por último, el sorteo será reproducible, por lo que cuando termine la ejecuci�
 El sorteo del desembarco **no es completamente aleatorio**. Se aplica un sistema de **ponderación basado en criterios objetivos**, con el objetivo de fomentar la participación activa, la equidad y la rotación.  
 A continuación se detallan las reglas aplicadas:
 
-#### 📐 Reglas de exclusión y penalización por defecto
+#### 📉 Penalizaciones
 
-| Criterio                            | Efecto sobre la probabilidad | Detalles                                                       |
-|-------------------------------------|-------------------------------|----------------------------------------------------------------|
-| ❌ Infracción cometida              | Exclusión total              | No participa en el sorteo.                                     |
-| 📉 Participó en el desembarco anterior | -90% de peso                 | Probabilidad drásticamente reducida (*peso x 0.1*).            |
-| 💸 Cuota reducida o incompleta      | -75% de peso                 | Penaliza la aportación parcial (*peso x 0.25*).                |
-| 🤝 Implicación activa en la organización | +25% de peso               | Reconoce el compromiso (*peso x 1.25*).                        |
+| Criterio                           | Multiplicador | Descripción                                                                 |
+|------------------------------------|----------------|-----------------------------------------------------------------------------|
+| ❌ Desembarcó el año anterior      | `0.5`          | Reduce la probabilidad en un 50%. Fomenta la rotación.                     |
+| 💸 Cuota reducida/incompleta       | `0.25`         | Fuerte penalización. Penaliza menor compromiso económico.                  |
+| ⛔ Infracción (reglas, comportamiento...) | Exclusión total | No participa en el sorteo. Fin.                                             |
 
 > 📎 *Nota: Las penalizaciones y bonificaciones son acumulativas y se aplican sobre un peso base de 1.0.*
+
+---
+
+#### 📈 Bonificaciones
+
+| Criterio                     | Multiplicador | Descripción                                                             |
+|------------------------------|----------------|-------------------------------------------------------------------------|
+| 🤝 Implicación activa        | `1.25`         | Recompensa a quienes colaboran de forma activa en la organización.      |
+| 🧓 Antigüedad en la Penya    | `2.0`          | Doble peso. Recompensa años de pertenencia. Anula exactamente la penalización por haber salido el año anterior. |
+
+---
+
+#### 🔍 Casos prácticos
+
+| Escenario                                           | Fórmula                                | Peso final |
+|----------------------------------------------------|----------------------------------------|------------|
+| Solo cuota reducida                                | `1.0 × 0.25`                           | `0.25`     |
+| Salió el año anterior + es antiguo                 | `1.0 × 0.5 × 2.0`                      | `1.0 ✅`   |
+| Salió + cuota reducida + implicado                 | `1.0 × 0.5 × 0.25 × 1.25`              | `0.15625`  |
+| Cuota completa + implicación + antiguo             | `1.0 × 1.25 × 2.0`                     | `2.5 🚀`   |
+| Salió + cuota reducida, sin implicación ni antigüedad | `1.0 × 0.5 × 0.25`                  | `0.125 🫠` |
 
 ---
 
@@ -39,16 +59,40 @@ Una persona con:
 - Participación el año anterior ✅  
 - Implicación ✅  
 
-**Peso:** `1.0 x 0.1 x 0.25 x 1.25 = 0.03125`  
-(*Muy baja probabilidad, pero no imposible.*)
+**Peso:** `1.0 × 0.5 × 0.25 × 1.25 = 0.15625`  
+(*Muy baja probabilidad, pero no imposible. Si además no estuviera implicado, sería aún peor.*)
+
+---
 
 Una persona con:
 - Cuota completa ✅  
 - No desembarcó ✅  
 - Implicación ✅  
 
-**Peso:** `1.0 x 1.25 = 1.25`  
-(*Más probabilidades de ser seleccionada.*)
+**Peso:** `1.0 × 1.25 = 1.25`  
+(*Buena probabilidad. Casi el peso máximo si no es antigua.*)
+
+---
+
+Una persona con:
+- Cuota completa ✅  
+- Desembarcó el año anterior ✅  
+- Antiguo en la Penya ✅  
+- No implicado ❌  
+
+**Peso:** `1.0 × 0.5 × 2.0 = 1.0`  
+(*Antigüedad compensa exactamente la penalización por repetir.*)
+
+---
+
+Una persona con:
+- Cuota completa ✅  
+- No desembarcó ✅  
+- Implicación ✅  
+- Antiguo ✅  
+
+**Peso:** `1.0 × 1.25 × 2.0 = 2.5 🚀`  
+(*Máximo empujón. Si no le toca, el universo está roto.*)
 
 ---
 
@@ -58,11 +102,14 @@ Las ponderaciones se ajustan en el principio del script `sorteo.py` mediante con
 
 ```python
 # 🚨 CONSTANTES DE PENALIZACIÓN
-PENALIZACION_DESEMBARCO_ANTERIOR = 0.1      # -90% si desembarcó antes
+PENALIZACION_DESEMBARCO_ANTERIOR = 0.5      # -50% si desembarcó antes
 PENALIZACION_CUOTA_REDUCIDA = 0.25          # -75% si no es completa
-EXCLUSION_POR_INFRACCION = True             # Si cometió infracción, fuera
-BONIFICACION_IMPLICACION = 1.25             # +25% de peso si está implicado
+EXCLUSION_POR_INFRACCION = True             # Fuera del sorteo
+BONIFICACION_IMPLICACION = 1.25             # +25% si está implicado
+BONIFICACION_ANTIGUEDAD = 2.0               # +100% si es antiguo
 ```
+
+> ⚖️ Estas constantes pueden ser ajustadas por la organización antes del sorteo en función de las necesidades del año.
 
 ## Excel2JSON
 
