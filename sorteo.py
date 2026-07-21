@@ -17,13 +17,16 @@ except ImportError:  # Permite validar y ejecutar el núcleo sin el formato enri
         return "\n".join("\t".join(str(valor) for valor in fila) for fila in contenido)
 
 
-VERSION = "2.0.0"
+VERSION = "2.2.0"
 
 # Baremo 2026. La cuota completa determina el bloque de prioridad; estos
 # multiplicadores ordenan de forma ponderada a las personas dentro de su bloque.
 PENALIZACION_DESEMBARCO_ANTERIOR = 0.55
 BONIFICACION_IMPLICACION = 1.30
 BONIFICACION_ANTIGUEDAD = 1.20
+BONIFICACION_DESFILA = 1.25
+BONIFICACION_CUMPLIO_18 = 1.15
+BONIFICACION_TIRADOR = 1.15
 BONIFICACION_POR_COMISION = 0.15
 MAX_COMISIONES_BONIFICADAS = 4
 SIMULACIONES_PROBABILIDAD = 20_000
@@ -91,7 +94,10 @@ def validar_participantes(datos):
 
         persona["id"] = identificador
         persona["tipo_cuota"] = normalizar_cuota(persona.get("tipo_cuota", ""))
-        for campo in ("desembarco_anterior", "infraccion", "implicacion", "antiguo"):
+        for campo in (
+            "desembarco_anterior", "infraccion", "implicacion", "antiguo",
+            "desfila", "cumplio_18_este_ano", "tirador",
+        ):
             persona[campo] = normalizar_booleano(persona.get(campo, False), campo)
 
         comisiones = persona.get("comisiones", 0)
@@ -126,6 +132,15 @@ def calcular_desglose(persona):
     if persona["antiguo"]:
         peso *= BONIFICACION_ANTIGUEDAD
         factores.append(f"Antigüedad ×{BONIFICACION_ANTIGUEDAD:.2f}")
+    if persona.get("desfila", False):
+        peso *= BONIFICACION_DESFILA
+        factores.append(f"Desfila ×{BONIFICACION_DESFILA:.2f}")
+    if persona.get("cumplio_18_este_ano", False):
+        peso *= BONIFICACION_CUMPLIO_18
+        factores.append(f"Cumplió 18 este año ×{BONIFICACION_CUMPLIO_18:.2f}")
+    if persona.get("tirador", False):
+        peso *= BONIFICACION_TIRADOR
+        factores.append(f"Tirador ×{BONIFICACION_TIRADOR:.2f}")
 
     comisiones_bonificadas = min(persona["comisiones"], MAX_COMISIONES_BONIFICADAS)
     factor_comisiones = 1 + BONIFICACION_POR_COMISION * comisiones_bonificadas
@@ -193,6 +208,9 @@ def filas_participantes(participantes, probabilidades=None):
             "Sí" if p["desembarco_anterior"] else "No",
             "Sí" if p["implicacion"] else "No",
             "Sí" if p["antiguo"] else "No",
+            "Sí" if p["desfila"] else "No",
+            "Sí" if p["cumplio_18_este_ano"] else "No",
+            "Sí" if p["tirador"] else "No",
         ]
         if probabilidades is not None:
             fila.append(f"{probabilidades[str(p['id'])]:.2f}%")
@@ -203,7 +221,7 @@ def filas_participantes(participantes, probabilidades=None):
 def mostrar_probabilidades(personas, num_plazas, simulaciones):
     preparados, excluidos = preparar_participantes(personas)
     probabilidades = estimar_probabilidades(personas, num_plazas, simulaciones)
-    headers = ["ID", "Nombre", "Apellidos", "Cuota", "Comisiones", "Peso", "Salió antes", "Implicado", "Antiguo", "Prob. plaza"]
+    headers = ["ID", "Nombre", "Apellidos", "Cuota", "Comisiones", "Peso", "Salió antes", "Implicado", "Antiguo", "Desfila", "18 este año", "Tirador", "Prob. plaza"]
     print(f"\n📊 Probabilidad estimada de obtener una de las {num_plazas} plazas")
     print(f"Simulación determinista de {simulaciones:,} sorteos. La cuota completa tiene prioridad.")
     print(tabulate(filas_participantes(preparados, probabilidades), headers=headers, tablefmt="fancy_grid"))
@@ -225,6 +243,9 @@ def configuracion_baremo():
         "penalizacion_desembarco_anterior": PENALIZACION_DESEMBARCO_ANTERIOR,
         "bonificacion_implicacion": BONIFICACION_IMPLICACION,
         "bonificacion_antiguedad": BONIFICACION_ANTIGUEDAD,
+        "bonificacion_desfila": BONIFICACION_DESFILA,
+        "bonificacion_cumplio_18_este_ano": BONIFICACION_CUMPLIO_18,
+        "bonificacion_tirador": BONIFICACION_TIRADOR,
         "bonificacion_por_comision": BONIFICACION_POR_COMISION,
         "max_comisiones_bonificadas": MAX_COMISIONES_BONIFICADAS,
     }
@@ -246,7 +267,7 @@ def exportar_resultados(base_salida, metadatos, seleccionados, suplentes, exclui
         for clave, valor in metadatos.items():
             archivo.write(f"{clave}: {valor}\n")
         archivo.write("Baremo: cuota completa primero; ponderación dentro de cada bloque.\n\n")
-        headers = ["ID", "Nombre", "Apellidos", "Cuota", "Comisiones", "Peso", "Salió antes", "Implicado", "Antiguo"]
+        headers = ["ID", "Nombre", "Apellidos", "Cuota", "Comisiones", "Peso", "Salió antes", "Implicado", "Antiguo", "Desfila", "18 este año", "Tirador"]
         for titulo, grupo in (("SELECCIONADOS", seleccionados), ("SUPLENTES", suplentes)):
             archivo.write(f"{titulo}\n")
             archivo.write(tabulate(filas_participantes(grupo), headers=headers, tablefmt="grid") if grupo else "Ninguno")
@@ -290,7 +311,7 @@ def main():
         seleccionados = ordenados[:args.num_plazas]
         suplentes = ordenados[args.num_plazas:]
 
-        headers = ["ID", "Nombre", "Apellidos", "Cuota", "Comisiones", "Peso", "Salió antes", "Implicado", "Antiguo"]
+        headers = ["ID", "Nombre", "Apellidos", "Cuota", "Comisiones", "Peso", "Salió antes", "Implicado", "Antiguo", "Desfila", "18 este año", "Tirador"]
         print(f"\n🎯 Seleccionados ({len(seleccionados)}):")
         print(tabulate(filas_participantes(seleccionados), headers=headers, tablefmt="fancy_grid"))
         print(f"\n🪑 Suplentes ({len(suplentes)}):")

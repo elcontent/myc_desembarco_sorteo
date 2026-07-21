@@ -26,21 +26,28 @@ Todas las personas parten de un peso `1,00`:
 | Desembarcó el año anterior | `× 0,55` | Favorece la rotación |
 | Implicación personal activa | `× 1,30` | Premia el trabajo actual en la Penya |
 | Antigüedad | `× 1,20` | Reconoce la trayectoria sin hacerla decisiva |
+| Desfila este año | `× 1,25` | Premia el compromiso directo con los actos de la Penya |
+| Ha cumplido 18 este año | `× 1,15` | Facilita la incorporación de nuevos adultos al Desembarco |
+| Es tirador/a | `× 1,15` | Reconoce una función activa y específica durante el Desembarco |
 | Cada comisión | `× (1 + 0,15 × comisiones)` | Premia trabajo concreto y verificable |
 
 La bonificación de comisiones tiene un máximo de cuatro comisiones: el factor máximo es `× 1,60`. Se evita así que acumular cargos nominales produzca una ventaja desproporcionada.
 
-Ejemplo: una persona implicada, antigua, presente en tres comisiones y que no desembarcó el año anterior tendrá:
+Ejemplo: una persona implicada, antigua, que desfila, presente en tres comisiones y que no desembarcó el año anterior tendrá:
 
 ```text
-1,00 × 1,30 × 1,20 × 1,45 = 2,262
+1,00 × 1,30 × 1,20 × 1,25 × 1,45 = 2,8275
 ```
 
 Si desembarcó el año anterior:
 
 ```text
-1,00 × 0,55 × 1,30 × 1,20 × 1,45 = 1,2441
+1,00 × 0,55 × 1,30 × 1,20 × 1,25 × 1,45 = 1,5551
 ```
+
+Si además ha cumplido 18 años durante el año del sorteo, el peso se multiplica por `1,15`. Esta bonificación se aplica una sola vez y únicamente ese año. El campo debe reflejar que ya los ha cumplido, no que los cumplirá más adelante.
+
+Las personas que participen como tiradoras reciben otro factor `× 1,15`. Este extra es acumulable con desfilar, cumplir 18 y los demás criterios, pero no altera la prioridad por tipo de cuota.
 
 Las infracciones siguen suponiendo exclusión total.
 
@@ -58,6 +65,9 @@ Las infracciones siguen suponiendo exclusión total.
       "infraccion": false,
       "implicacion": true,
       "antiguo": false,
+      "desfila": true,
+      "cumplio_18_este_ano": true,
+      "tirador": true,
       "comisiones": 2
     }
   ]
@@ -86,7 +96,9 @@ Columnas obligatorias:
 - `tipo cuota`
 - Una de estas dos: `edad` o `18`
 
-Columnas opcionales: `desembarco anterior`, `infraccion`, `implicacion`, `antiguo` y `comisiones`. Los campos opcionales ausentes toman `false` o `0`.
+Columnas opcionales: `desembarco anterior`, `infraccion`, `implicacion`, `antiguo`, `desfila`, `cumplio 18 este ano`, `tirador` y `comisiones`. Los campos opcionales ausentes toman `false` o `0`.
+
+`cumplio 18 este ano` es un dato explícito para evitar errores con una edad calculada en una fecha concreta: debe marcarse `Sí` solo cuando la persona ya haya cumplido los 18 durante el año del sorteo.
 
 ```bash
 python3 excel2json.py censo.xlsx NOMBRE_HOJA FILA_ENCABEZADO
@@ -152,7 +164,7 @@ La huella permite demostrar que el fichero utilizado para repetir el sorteo es e
 python3 -m unittest discover -s tests -v
 ```
 
-Las pruebas comprueban la prioridad de la cuota completa, la reproducibilidad, los límites de las comisiones, la relación entre implicación y antigüedad y varias validaciones de entrada.
+Las pruebas comprueban la prioridad de la cuota completa, la reproducibilidad, los límites de las comisiones, las bonificaciones por desfilar, cumplir 18 y ser tirador, la relación entre implicación y antigüedad y varias validaciones de entrada.
 
 ## Autor
 

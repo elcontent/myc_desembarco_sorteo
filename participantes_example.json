@@ -9,6 +9,9 @@
       "infraccion": false,
       "implicacion": true,
       "antiguo": false,
+      "desfila": true,
+      "cumplio_18_este_ano": true,
+      "tirador": true,
       "comisiones": 2
     },
     {
@@ -20,6 +23,9 @@
       "infraccion": false,
       "implicacion": false,
       "antiguo": true,
+      "desfila": false,
+      "cumplio_18_este_ano": false,
+      "tirador": false,
       "comisiones": 1
     },
     {
@@ -31,6 +37,9 @@
       "infraccion": false,
       "implicacion": true,
       "antiguo": true,
+      "desfila": true,
+      "cumplio_18_este_ano": false,
+      "tirador": true,
       "comisiones": 4
     },
     {
@@ -42,6 +51,9 @@
       "infraccion": false,
       "implicacion": false,
       "antiguo": false,
+      "desfila": true,
+      "cumplio_18_este_ano": false,
+      "tirador": false,
       "comisiones": 0
     },
     {
@@ -53,6 +65,9 @@
       "infraccion": true,
       "implicacion": true,
       "antiguo": false,
+      "desfila": false,
+      "cumplio_18_este_ano": false,
+      "tirador": false,
       "comisiones": 3
     }
   ]

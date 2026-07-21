@@ -8,7 +8,10 @@ import pandas as pd
 
 
 COLUMNAS_REQUERIDAS = ["id", "nombre", "apellidos", "tipo_cuota"]
-CAMPOS_BOOLEANOS = ["desembarco_anterior", "infraccion", "implicacion", "antiguo"]
+CAMPOS_BOOLEANOS = [
+    "desembarco_anterior", "infraccion", "implicacion", "antiguo", "desfila",
+    "cumplio_18_este_ano", "tirador",
+]
 
 
 def normalizar_columna(columna):
