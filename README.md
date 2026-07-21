@@ -1,263 +1,159 @@
-# 🎲 Sorteo del Desembarco - Penya El Tabik
+# 🎲 Sorteo del Desembarco — Penya El Tabik
 
-Sorteo ponderado y transparente para asignar las plazas del Desembarco en las fiestas de Moros y Cristianos de La Vila Joiosa.
+Herramienta reproducible y auditable para asignar las plazas del Desembarco de las fiestas de Moros y Cristianos de La Vila Joiosa.
 
-## 🏴‍☠️ Descripción
+## Baremo 2026
 
-El Sorteo del Desembarco es un acto que realizamos en la Penya el Tabik cada año para repartir las plazas asignadas a la Penya para el Desembarco. 
+El sistema combina **prioridad económica**, **implicación personal** y **rotación**.
 
-## ⚙️ Datos técnicos y funcionamiento general
+### 1. Prioridad por cuota
 
-Tenemos un script desarrollado en Python que se encarga de realizar el sorteo. Este script utiliza las librerías `random` y `numpy` para seleccionar aleatoriamente a los participantes, pero aplicando ponderaciones según ciertos criterios objetivos (participación previa, implicación, tipo de cuota...).
+El sorteo se divide en dos bloques independientes:
 
-La entrada de datos del script es un fichero JSON que contiene la lista de participantes y sus respectivas variables de ponderación. El script genera un fichero TXT con el resultado del sorteo.
+1. Personas con cuota completa (`completa`, `sí` o `nuevo sí`).
+2. Personas con cuota reducida (`reducida`, `no`, `media` o `incompleta`).
 
-Por último, el sorteo será reproducible, por lo que cuando termine la ejecución del script, nos dirá la semilla utilizada para el sorteo. De esta manera, si se quiere repetir el sorteo con los mismos participantes y ponderaciones, se podrá hacer utilizando la misma semilla y el mismo fichero de entrada.
+Primero se adjudican plazas al bloque de cuota completa. El segundo bloque solo obtiene plaza cuando quedan vacantes después de ordenar a todas las personas del primero. Dentro de cada bloque se realiza un sorteo ponderado sin reemplazo.
 
-### ⚙️ Criterios de Ponderación del Sorteo
+Esto evita que una cuota reducida muy bonificada adelante a una cuota completa, pero conserva un orden justo de suplentes en ambos grupos.
 
-El sorteo del desembarco **no es completamente aleatorio**. Se aplica un sistema de **ponderación basado en criterios objetivos**, con el objetivo de fomentar la participación activa, la equidad y la rotación.  
-A continuación se detallan las reglas aplicadas:
+### 2. Ponderación dentro de cada bloque
 
-#### 📉 Penalizaciones
+Todas las personas parten de un peso `1,00`:
 
-| Criterio                           | Multiplicador | Descripción                                                                 |
-|------------------------------------|----------------|-----------------------------------------------------------------------------|
-| ❌ Desembarcó el año anterior      | `0.5`          | Reduce la probabilidad en un 50%. Fomenta la rotación.                     |
-| 💸 Cuota reducida/incompleta       | `0.25`         | Fuerte penalización. Penaliza menor compromiso económico.                  |
-| ⛔ Infracción (reglas, comportamiento...) | Exclusión total | No participa en el sorteo. Fin.                                             |
+| Criterio | Factor | Motivo |
+|---|---:|---|
+| Desembarcó el año anterior | `× 0,55` | Favorece la rotación |
+| Implicación personal activa | `× 1,30` | Premia el trabajo actual en la Penya |
+| Antigüedad | `× 1,20` | Reconoce la trayectoria sin hacerla decisiva |
+| Cada comisión | `× (1 + 0,15 × comisiones)` | Premia trabajo concreto y verificable |
 
-> 📎 *Nota: Las penalizaciones y bonificaciones son acumulativas y se aplican sobre un peso base de 1.0.*
+La bonificación de comisiones tiene un máximo de cuatro comisiones: el factor máximo es `× 1,60`. Se evita así que acumular cargos nominales produzca una ventaja desproporcionada.
 
----
+Ejemplo: una persona implicada, antigua, presente en tres comisiones y que no desembarcó el año anterior tendrá:
 
-#### 📈 Bonificaciones
-
-| Criterio                     | Multiplicador | Descripción                                                             |
-|------------------------------|----------------|-------------------------------------------------------------------------|
-| 🤝 Implicación activa        | `1.25`         | Recompensa a quienes colaboran de forma activa en la organización.      |
-| 🧓 Antigüedad en la Penya    | `2.0`          | Doble peso. Recompensa años de pertenencia. Anula exactamente la penalización por haber salido el año anterior. |
-
----
-
-#### 🔍 Casos prácticos
-
-| Escenario                                           | Fórmula                                | Peso final |
-|----------------------------------------------------|----------------------------------------|------------|
-| Solo cuota reducida                                | `1.0 × 0.25`                           | `0.25`     |
-| Desembarcó el año anterior + es antiguo                 | `1.0 × 0.5 × 2.0`                      | `1.0 ✅`   |
-| Desembarcó + cuota reducida + implicado                 | `1.0 × 0.5 × 0.25 × 1.25`              | `0.15625`  |
-| Cuota completa + implicación + antiguo             | `1.0 × 1.25 × 2.0`                     | `2.5 🚀`   |
-| Desembarcó + cuota reducida, sin implicación ni antigüedad | `1.0 × 0.5 × 0.25`                  | `0.125 🫠` |
-
----
-
-#### 📋 Ejemplo de cálculo del peso
-
-Una persona con:
-- Cuota reducida ✅  
-- Desembarcó el año anterior ✅  
-- Implicación ✅  
-
-**Peso:** `1.0 × 0.5 × 0.25 × 1.25 = 0.15625`  
-(*Muy baja probabilidad, pero no imposible. Si además no estuviera implicado, sería aún peor.*)
-
----
-
-Una persona con:
-- Cuota completa ✅  
-- No desembarcó ✅  
-- Implicación ✅  
-
-**Peso:** `1.0 × 1.25 = 1.25`  
-(*Buena probabilidad. Casi el peso máximo si no es antigua.*)
-
----
-
-Una persona con:
-- Cuota completa ✅  
-- Desembarcó el año anterior ✅  
-- Antiguo en la Penya ✅  
-- No implicado ❌  
-
-**Peso:** `1.0 × 0.5 × 2.0 = 1.0`  
-(*Antigüedad compensa exactamente la penalización por repetir.*)
-
----
-
-Una persona con:
-- Cuota completa ✅  
-- No desembarcó ✅  
-- Implicación ✅  
-- Antiguo ✅  
-
-**Peso:** `1.0 × 1.25 × 2.0 = 2.5 🚀`  
-(*Máximo empujón. Si no le toca, el universo está roto.*)
-
----
-
-#### Ajuste de pesos
-
-Las ponderaciones se ajustan en el principio del script `sorteo.py` mediante constantes. Puedes modificar estos valores para ajustar la influencia de cada criterio en el sorteo. Estas constantes son:
-
-```python
-# 🚨 CONSTANTES DE PENALIZACIÓN
-PENALIZACION_DESEMBARCO_ANTERIOR = 0.5      # -50% si desembarcó antes
-PENALIZACION_CUOTA_REDUCIDA = 0.25          # -75% si no es completa
-EXCLUSION_POR_INFRACCION = True             # Fuera del sorteo
-BONIFICACION_IMPLICACION = 1.25             # +25% si está implicado
-BONIFICACION_ANTIGUEDAD = 2.0               # +100% si es antiguo
+```text
+1,00 × 1,30 × 1,20 × 1,45 = 2,262
 ```
 
-> ⚖️ Estas constantes pueden ser ajustadas por la organización antes del sorteo en función de las necesidades del año.
+Si desembarcó el año anterior:
 
-## Excel2JSON
-
-Para facilitar la creación del fichero JSON de entrada, puedes utilizar el script `excel2json.py` que convierte un fichero Excel con la lista de participantes a formato JSON. Este script asume que el fichero Excel tiene las siguientes columnas:
-- `id`: Identificador del participante.
-- `nombre`: Nombre del participante.
-- `apellidos`: Apellidos del participante.
-- `tipo cuota`: Tipo de cuota del participante (completa o reducida).
-- `edad`: Edad del participante.
-
-Puedes ejecutar el script `excel2json.py` de la siguiente manera:
-
-```bash
-python3 excel2json.py nombre_excel.xlsx nombre_hoja
+```text
+1,00 × 0,55 × 1,30 × 1,20 × 1,45 = 1,2441
 ```
 
-## 🧾 Ejecución del script _sorteo.py_
+Las infracciones siguen suponiendo exclusión total.
 
-Asegúrate de tener Python instalado y las dependencias requeridas (`tabulate`, etc.).  
-Puedes instalar los requisitos con:
-
-```bash
-pip install -r requirements.txt
-```
-
-## 📂 Entrada
-
-El script `sorteo.py` espera un fichero JSON con la siguiente estructura:
+## Datos de entrada
 
 ```json
 {
   "participantes": [
     {
       "id": 1,
-      "nombre": "Nombre del participante",
-      "apellidos": "Apellidos del participante",
-      "desembarco_anterior": true,
+      "nombre": "Nombre",
+      "apellidos": "Apellidos",
+      "tipo_cuota": "completa",
+      "desembarco_anterior": false,
       "infraccion": false,
-      "tipo_cuota": "completa"
-    },
+      "implicacion": true,
+      "antiguo": false,
+      "comisiones": 2
+    }
   ]
 }
 ```
 
-## 🚀 Comandos de sorteo.py
+El programa rechaza IDs duplicados, campos obligatorios vacíos, cuotas desconocidas, booleanos ambiguos y cantidades de comisiones negativas o decimales.
 
-El script `sorteo.py` se ejecuta desde la línea de comandos y acepta los siguientes parámetros:
+## Instalación
 
-### 🎯 Ejecutar sorteo
-
-```bash
-python sorteo.py participantes.json NUM_PLAZAS
-```
-
-Opcionalmente, puedes especificar una semilla para reproducibilidad:
+Requiere Python 3.10 o superior.
 
 ```bash
-python sorteo.py participantes.json NUM_PLAZAS --semilla 12345
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Esto generará por pantalla una tabla con los seleccionados y excluidos (si los hay) y además guardará un fichero .txt con los resultados en el mismo directorio. En caso de no especificar la semilla, se generará una aleatoria.
+## Conversión desde Excel
 
-### 📊 Ver probabilidades sin ejecutar el sorteo
+Columnas obligatorias:
+
+- `id`
+- `nombre`
+- `apellidos`
+- `tipo cuota`
+- Una de estas dos: `edad` o `18`
+
+Columnas opcionales: `desembarco anterior`, `infraccion`, `implicacion`, `antiguo` y `comisiones`. Los campos opcionales ausentes toman `false` o `0`.
 
 ```bash
-python sorteo.py participantes.json NUM_PLAZAS --probabilidades
+python3 excel2json.py censo.xlsx NOMBRE_HOJA FILA_ENCABEZADO
 ```
 
-Esto mostrará en consola una tabla con el peso y la probabilidad de cada participante válido (los que no están excluidos por infracción).
-
-### 🧪 Ejemplo real
+Por ejemplo, si los títulos están en la fila 7:
 
 ```bash
-python sorteo.py participantes_example.json 5 --semilla 33
+python3 excel2json.py censo.xlsx Censo 7
 ```
 
-Salida esperada: 
+Puede elegirse otro fichero de salida:
 
-```plaintext
-🎯 Seleccionados (5):
-╒══════╤══════════╤═════════════╤══════════╤════════╤══════════════╤═════════════╤═══════════╕
-│   ID │ Nombre   │ Apellidos   │ Cuota    │   Peso │ Desembarcó   │ Implicado   │ Antiguo   │
-╞══════╪══════════╪═════════════╪══════════╪════════╪══════════════╪═════════════╪═══════════╡
-│    3 │ Charlie  │ Williams    │ sí       │   1.25 │ No           │ Sí          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│    4 │ Diana    │ Brown       │ completa │   0.5  │ Sí           │ No          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│   10 │ Jack     │ Lee         │ completa │   1    │ No           │ No          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│    1 │ Alice    │ Johnson     │ completa │   1.25 │ No           │ Sí          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│    8 │ Henry    │ Martinez    │ sí       │   1    │ No           │ No          │ No        │
-╘══════╧══════════╧═════════════╧══════════╧════════╧══════════════╧═════════════╧═══════════╛
-
-🪑 Suplentes (4):
-╒══════╤══════════╤═════════════╤══════════╤════════╤══════════════╤═════════════╤═══════════╕
-│   ID │ Nombre   │ Apellidos   │ Cuota    │   Peso │ Desembarcó   │ Implicado   │ Antiguo   │
-╞══════╪══════════╪═════════════╪══════════╪════════╪══════════════╪═════════════╪═══════════╡
-│    7 │ Grace    │ Garcia      │ reducida │   0.25 │ No           │ No          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│    9 │ Isabel   │ Rodriguez   │ completa │   0.62 │ Sí           │ Sí          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│    6 │ Frank    │ Davis       │ completa │   0.62 │ Sí           │ Sí          │ No        │
-├──────┼──────────┼─────────────┼──────────┼────────┼──────────────┼─────────────┼───────────┤
-│    2 │ Bob      │ Smith       │ reducida │   0.12 │ Sí           │ No          │ No        │
-╘══════╧══════════╧═════════════╧══════════╧════════╧══════════════╧═════════════╧═══════════╛
-
-⛔ Excluidos por infracción (1):
-╒══════╤══════════╤═════════════╤══════════╕
-│   ID │ Nombre   │ Apellidos   │ Cuota    │
-╞══════╪══════════╪═════════════╪══════════╡
-│    5 │ Eve      │ Miller      │ reducida │
-╘══════╧══════════╧═════════════╧══════════╛
-
-📁 Resultados exportados a 'sorteo_resultado_20250723_121132.txt'
+```bash
+python3 excel2json.py censo.xlsx Censo 7 --salida participantes_2026.json
 ```
 
-En el caso de querer ver las probabilidades sin ejecutar el sorteo, la salida sería:
+## Ejecutar el sorteo
 
-```plaintext
-📊 Listado de Probabilidades:
-==================================================
-╒══════╤══════════╤═════════════╤════════╤════════════════╕
-│   ID │ Nombre   │ Apellidos   │   Peso │ Probabilidad   │
-╞══════╪══════════╪═════════════╪════════╪════════════════╡
-│    1 │ Alice    │ Johnson     │   1.25 │ 18.87%         │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    3 │ Charlie  │ Williams    │   1.25 │ 18.87%         │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    8 │ Henry    │ Martinez    │   1    │ 15.09%         │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│   10 │ Jack     │ Lee         │   1    │ 15.09%         │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    6 │ Frank    │ Davis       │   0.62 │ 9.43%          │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    9 │ Isabel   │ Rodriguez   │   0.62 │ 9.43%          │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    4 │ Diana    │ Brown       │   0.5  │ 7.55%          │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    7 │ Grace    │ Garcia      │   0.25 │ 3.77%          │
-├──────┼──────────┼─────────────┼────────┼────────────────┤
-│    2 │ Bob      │ Smith       │   0.12 │ 1.89%          │
-╘══════╧══════════╧═════════════╧════════╧════════════════╛
-==================================================
+```bash
+python3 sorteo.py participantes.json NUM_PLAZAS
 ```
 
+Con una semilla concreta:
 
-## 👤 Autor
+```bash
+python3 sorteo.py participantes.json 5 --semilla 20260728
+```
 
-Desarrollado por [Jordi Sellés Enríquez](https://cv.elcontent.es) – Directiva de la Penya El Tabik
+Si no se indica semilla, se genera una aleatoria de 64 bits y se muestra al terminar. Usando el mismo JSON y la misma semilla se obtiene el mismo orden.
 
+### Probabilidad real de obtener plaza
+
+```bash
+python3 sorteo.py participantes.json 5 --probabilidades
+```
+
+Se simulan 20.000 sorteos deterministas para estimar la probabilidad de conseguir **alguna de las plazas**, respetando la prioridad por cuota y el sorteo sin reemplazo. Ya no se presenta la probabilidad de la primera extracción como si fuera la probabilidad final.
+
+El número de simulaciones puede modificarse:
+
+```bash
+python3 sorteo.py participantes.json 5 --probabilidades --simulaciones 50000
+```
+
+## Auditoría
+
+Cada ejecución genera:
+
+- Un informe legible `.txt`.
+- Un registro estructurado `.json` con seleccionados, suplentes, excluidos y desglose de pesos.
+- La semilla empleada.
+- La versión del programa.
+- La configuración exacta del baremo.
+- La huella SHA-256 del fichero de entrada.
+- Fecha y zona horaria de ejecución.
+
+La huella permite demostrar que el fichero utilizado para repetir el sorteo es exactamente el mismo.
+
+## Pruebas
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Las pruebas comprueban la prioridad de la cuota completa, la reproducibilidad, los límites de las comisiones, la relación entre implicación y antigüedad y varias validaciones de entrada.
+
+## Autor
+
+Desarrollado por [Jordi Sellés Enríquez](https://elcontent.es) para la Penya El Tabik.

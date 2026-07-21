@@ -127,3 +127,4 @@ dmypy.json
 participantes.json
 sorteo_*.txt
 *.xlsx
+sorteo_resultado_*.json

@@ -4,91 +4,56 @@
       "id": 1,
       "nombre": "Alice",
       "apellidos": "Johnson",
+      "tipo_cuota": "completa",
       "desembarco_anterior": false,
       "infraccion": false,
-      "tipo_cuota": "completa",
-      "implicacion": true
+      "implicacion": true,
+      "antiguo": false,
+      "comisiones": 2
     },
     {
       "id": 2,
       "nombre": "Bob",
       "apellidos": "Smith",
+      "tipo_cuota": "reducida",
       "desembarco_anterior": true,
       "infraccion": false,
-      "tipo_cuota": "reducida",
-      "implicacion": false
+      "implicacion": false,
+      "antiguo": true,
+      "comisiones": 1
     },
     {
       "id": 3,
       "nombre": "Charlie",
       "apellidos": "Williams",
+      "tipo_cuota": "nuevo sí",
       "desembarco_anterior": false,
       "infraccion": false,
-      "tipo_cuota": "sí",
-      "implicacion": true
+      "implicacion": true,
+      "antiguo": true,
+      "comisiones": 4
     },
     {
       "id": 4,
       "nombre": "Diana",
       "apellidos": "Brown",
+      "tipo_cuota": "completa",
       "desembarco_anterior": true,
       "infraccion": false,
-      "tipo_cuota": "completa",
-      "implicacion": false
+      "implicacion": false,
+      "antiguo": false,
+      "comisiones": 0
     },
     {
       "id": 5,
       "nombre": "Eve",
       "apellidos": "Miller",
+      "tipo_cuota": "reducida",
       "desembarco_anterior": false,
       "infraccion": true,
-      "tipo_cuota": "reducida",
-      "implicacion": true
-    },
-    {
-      "id": 6,
-      "nombre": "Frank",
-      "apellidos": "Davis",
-      "desembarco_anterior": true,
-      "infraccion": false,
-      "tipo_cuota": "completa",
-      "implicacion": true
-    },
-    {
-      "id": 7,
-      "nombre": "Grace",
-      "apellidos": "Garcia",
-      "desembarco_anterior": false,
-      "infraccion": false,
-      "tipo_cuota": "reducida",
-      "implicacion": false
-    },
-    {
-      "id": 8,
-      "nombre": "Henry",
-      "apellidos": "Martinez",
-      "desembarco_anterior": false,
-      "infraccion": false,
-      "tipo_cuota": "sí",
-      "implicacion": false
-    },
-    {
-      "id": 9,
-      "nombre": "Isabel",
-      "apellidos": "Rodriguez",
-      "desembarco_anterior": true,
-      "infraccion": false,
-      "tipo_cuota": "completa",
-      "implicacion": true
-    },
-    {
-      "id": 10,
-      "nombre": "Jack",
-      "apellidos": "Lee",
-      "desembarco_anterior": false,
-      "infraccion": false,
-      "tipo_cuota": "completa",
-      "implicacion": false
+      "implicacion": true,
+      "antiguo": false,
+      "comisiones": 3
     }
   ]
 }
