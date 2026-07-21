@@ -156,4 +156,4 @@ Las pruebas comprueban la prioridad de la cuota completa, la reproducibilidad, l
 
 ## Autor
 
-Desarrollado por [Jordi Sellés Enríquez](https://elcontent.es) para la Penya El Tabik.
+Desarrollado por [Jordi Sellés Enríquez](https://cv.elcontent.es) para la Penya El Tabik.
